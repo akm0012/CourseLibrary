@@ -50,6 +50,18 @@ namespace CourseLibrary.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler(appBuilder =>
+                {
+                    appBuilder.Run(async context =>
+                    {
+                        context.Response.StatusCode = 500;
+                        // Todo: This is where you would log this stuff
+                        await context.Response.WriteAsync("Sorry! Something done blew up.");
+                    });
+                });
+            }
 
             app.UseRouting();
 
