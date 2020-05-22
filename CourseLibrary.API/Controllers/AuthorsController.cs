@@ -17,17 +17,19 @@ namespace CourseLibrary.API.Controllers
 
         public AuthorsController(ICourseLibraryRepository courseLibraryRepository, IMapper mapper)
         {
-            _courseLibraryRepository = courseLibraryRepository ?? 
+            _courseLibraryRepository = courseLibraryRepository ??
                                        throw new ArgumentNullException(nameof(courseLibraryRepository));
-            _mapper = mapper ?? 
+            _mapper = mapper ??
                       throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet()]
         [HttpHead]
-        public ActionResult<IEnumerable<AuthorDto>> GetAuthors([FromQuery(Name = "mainCategory")] string mainCategory)
+        public ActionResult<IEnumerable<AuthorDto>> GetAuthors(
+            [FromQuery(Name = "mainCategory")] string mainCategory,
+            [FromQuery(Name = "searchQuery")] string searchQuery)
         {
-            var authorsFromRepo = _courseLibraryRepository.GetAuthors(mainCategory);
+            var authorsFromRepo = _courseLibraryRepository.GetAuthors(mainCategory, searchQuery);
             return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
         }
 
@@ -40,7 +42,7 @@ namespace CourseLibrary.API.Controllers
             {
                 return NotFound();
             }
-            
+
             return Ok(_mapper.Map<AuthorDto>(authorFromRepo));
         }
     }
