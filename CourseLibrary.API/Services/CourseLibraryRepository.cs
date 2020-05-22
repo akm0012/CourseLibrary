@@ -3,6 +3,7 @@ using CourseLibrary.API.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CourseLibrary.API.ResourceParameters;
 
 namespace CourseLibrary.API.Services
 {
@@ -122,6 +123,34 @@ namespace CourseLibrary.API.Services
             return _context.Authors.ToList<Author>();
         }
 
+        public IEnumerable<Author> GetAuthors(AuthorResourceParameters authorResourceParameters)
+        {
+            var mainCategory = authorResourceParameters.MainCategory;
+            var searchQuery = authorResourceParameters.SearchQuery;
+            
+            if (string.IsNullOrWhiteSpace(mainCategory) && string.IsNullOrWhiteSpace(searchQuery))
+            {
+                return GetAuthors();
+            }
+
+            var collection = _context.Authors as IQueryable<Author>;
+
+            if (!string.IsNullOrWhiteSpace(mainCategory))
+            {
+                mainCategory = mainCategory.Trim();
+                collection = collection.Where(author => author.MainCategory == mainCategory);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                collection = collection.Where(author => author.MainCategory.Contains(searchQuery)
+                                                        || author.FirstName.Contains(searchQuery)
+                                                        || author.LastName.Contains(searchQuery));
+            }
+            
+            return collection.ToList();
+        }
+        
         public IEnumerable<Author> GetAuthors(string mainCategory, string searchQuery)
         {
             if (string.IsNullOrWhiteSpace(mainCategory) && string.IsNullOrWhiteSpace(searchQuery))
