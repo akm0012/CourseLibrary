@@ -61,7 +61,6 @@ namespace CourseLibrary.API.Controllers
         public ActionResult<AuthorDto> CreateAuthor(AuthorForCreationDto authorDto)
         {
             var authorEntitiy = _mapper.Map<Entities.Author>(authorDto);
-            
             _courseLibraryRepository.AddAuthor(authorEntitiy);
             _courseLibraryRepository.Save();
 
