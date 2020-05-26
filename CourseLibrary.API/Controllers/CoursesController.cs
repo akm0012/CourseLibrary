@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AutoMapper;
+using CourseLibrary.API.Entities;
 using CourseLibrary.API.Models;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -63,8 +64,50 @@ namespace CourseLibrary.API.Controllers
             _courseLibraryRepository.Save();
 
             var courseToReturn = _mapper.Map<CourseDto>(courseEntity);
+
+            return CreatedAtRoute("GetCourseForAuthor",
+                new {authorId = courseToReturn.AuthorId, courseId = courseToReturn.Id}, courseToReturn);
+        }
+
+        [HttpPut("{courseId}")]
+        public IActionResult UpdateCourseForAuthor(Guid authorId, 
+            Guid courseId, 
+            CourseForUpdateDto courseForUpdateDto)
+        {
+            if (!_courseLibraryRepository.AuthorExists(authorId))
+            {
+                return NotFound();
+            }
+
+            var courseFromRepo = _courseLibraryRepository.GetCourse(authorId, courseId);
+            if (courseFromRepo == null)
+            {
+                // Put this back if you don't want PUTs to be able to create new resources 
+                // return NotFound();
+                
+                var courseToAdd = _mapper.Map<Course>(courseForUpdateDto);
+                courseToAdd.Id = courseId;
+
+                _courseLibraryRepository.AddCourse(authorId, courseToAdd);
+
+                _courseLibraryRepository.Save();
+
+                var courseToReturn = _mapper.Map<CourseDto>(courseToAdd);
+                
+                return CreatedAtRoute("GetCourseForAuthor",
+                    new {authorId, courseId = courseToAdd.Id}, courseToReturn);
+            }
             
-            return CreatedAtRoute("GetCourseForAuthor", new {authorId = courseToReturn.AuthorId, courseId = courseToReturn.Id }, courseToReturn);
+            // map the entity to a CourseForUpdateDto
+            // apply the updated field values to the dto
+            // map the CourseForUpdateDto back to an entity 
+            _mapper.Map(courseForUpdateDto, courseFromRepo);
+            
+            _courseLibraryRepository.UpdateCourse(courseFromRepo);
+
+            _courseLibraryRepository.Save();
+
+            return NoContent();
         }
     }
 }

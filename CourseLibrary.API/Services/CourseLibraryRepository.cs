@@ -68,6 +68,7 @@ namespace CourseLibrary.API.Services
         public void UpdateCourse(Course course)
         {
             // no code in this implementation
+            // Auto Mapper will change the instance and it will save it for us 
         }
 
         public void AddAuthor(Author author)

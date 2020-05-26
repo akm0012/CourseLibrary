@@ -79,7 +79,7 @@ namespace CourseLibrary.API
                     appBuilder.Run(async context =>
                     {
                         context.Response.StatusCode = 500;
-                        // Todo: This is where you would log this stuff
+                        // Todo: This is where you could log this stuff
                         await context.Response.WriteAsync("Sorry! Something done blew up.");
                     });
                 });
