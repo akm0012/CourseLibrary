@@ -130,7 +130,7 @@ namespace CourseLibrary.API.Controllers
             if (courseForAuthorFromRepo == null)
             {
                 var courseDto = new CourseForUpdateDto();
-                patchDocument.ApplyTo(courseDto);
+                patchDocument.ApplyTo(courseDto, ModelState);
                 
                 // Make sure we validate the patch
                 if (!TryValidateModel(courseDto))
