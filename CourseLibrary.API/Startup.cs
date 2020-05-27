@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 
 namespace CourseLibrary.API
 {
@@ -30,7 +31,14 @@ namespace CourseLibrary.API
                 {
                     // If you ask for XML, but we don't support that you will get a 406
                     setupAction.ReturnHttpNotAcceptable = true;
-                }).AddXmlDataContractSerializerFormatters() // Add support for XML
+                })
+                // Needed for Json Patch Document reading  
+                .AddNewtonsoftJson(setupAction =>
+                {
+                    setupAction.SerializerSettings.ContractResolver =
+                        new CamelCasePropertyNamesContractResolver();
+                })
+                .AddXmlDataContractSerializerFormatters() // Add support for XML (Add this second so JSON is the default, it will use whatever comes first)
                 .ConfigureApiBehaviorOptions(setupAction =>
                 {
                     setupAction.InvalidModelStateResponseFactory = context =>
