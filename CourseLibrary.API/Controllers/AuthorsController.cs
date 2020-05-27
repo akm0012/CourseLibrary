@@ -76,5 +76,20 @@ namespace CourseLibrary.API.Controllers
             Response.Headers.Add("Andrew", "This is a secret header for Andrew!");
             return Ok();
         }
+        
+        [HttpDelete("{authorId}")]
+        public ActionResult DeleteAuthor(Guid authorId)
+        {
+            var authorToDelete = _courseLibraryRepository.GetAuthor(authorId);
+            if (authorToDelete == null)
+            {
+                return NotFound();
+            }
+
+            _courseLibraryRepository.DeleteAuthor(authorToDelete);
+            _courseLibraryRepository.Save();
+
+            return NoContent();
+        }
     }
 }
