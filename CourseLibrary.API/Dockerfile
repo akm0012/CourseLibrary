@@ -1,3 +1,22 @@
+#FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+#WORKDIR /app
+#EXPOSE 80
+#
+#FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+#WORKDIR /src
+#COPY ["CourseLibrary.API.csproj", "./"]
+#RUN dotnet restore "./CourseLibrary.API.csproj"
+#COPY . .
+#RUN dotnet build "CourseLibrary.API.csproj" -c Release -o /app
+#
+#FROM build AS publish
+#RUN dotnet publish "CourseLibrary.API.csproj" -c Release -o /app
+#
+#FROM base AS final
+#WORKDIR /app
+#COPY --from=publish /app .
+#ENTRYPOINT ["dotnet", "CourseLibrary.API.dll"]
+
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
 WORKDIR /app
 
