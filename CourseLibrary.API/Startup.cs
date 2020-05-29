@@ -17,9 +17,12 @@ namespace CourseLibrary.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private IHostEnvironment CurrentEnvironment{ get; set; } 
+        
+        public Startup(IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             Configuration = configuration;
+            CurrentEnvironment = hostEnvironment;
         }
 
         public IConfiguration Configuration { get; }
@@ -68,16 +71,18 @@ namespace CourseLibrary.API
 
             services.AddDbContext<CourseLibraryContext>(options =>
             {
-                // Using Ode to food Docker DB
-                // options.UseSqlServer(Configuration.GetConnectionString("CourseLibraryDB"));
 
-                var connection = @"Server=db;Database=CourseLibraryDB;User=sa;Password=abcABC123;";
-                options.UseSqlServer(connection);
-                
-                
-                // Old connection string:
-                //    "OdeToFoodDb":"Server=localhost,1433;Database=OdeToFood;User Id=sa; Password=<P@ssword123>"
-
+                if (CurrentEnvironment.IsDevelopment())
+                {
+                    // Use local Docker DB
+                    options.UseSqlServer(Configuration.GetConnectionString("CourseLibraryDB"));
+                }
+                else
+                {
+                    // In Prod use the Docker-Compose database
+                    var connection = @"Server=db;Database=CourseLibraryDB;User=sa;Password=abcABC123;";
+                    options.UseSqlServer(connection);
+                }
             });
         }
 
