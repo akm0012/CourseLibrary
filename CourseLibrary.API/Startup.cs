@@ -69,7 +69,15 @@ namespace CourseLibrary.API
             services.AddDbContext<CourseLibraryContext>(options =>
             {
                 // Using Ode to food Docker DB
-                options.UseSqlServer(Configuration.GetConnectionString("OdeToFoodDb"));
+                // options.UseSqlServer(Configuration.GetConnectionString("CourseLibraryDB"));
+
+                var connection = @"Server=db;Database=CourseLibraryDB;User=sa;Password=abcABC123;";
+                options.UseSqlServer(connection);
+                
+                
+                // Old connection string:
+                //    "OdeToFoodDb":"Server=localhost,1433;Database=OdeToFood;User Id=sa; Password=<P@ssword123>"
+
             });
         }
 
